@@ -41,9 +41,14 @@ from pytorch_pretrained_bert.optimization import BertAdam
 from pytorch_pretrained_bert.file_utils import PYTORCH_PRETRAINED_BERT_CACHE
 from scipy.stats import bernoulli
 
-logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
-                    datefmt = '%m/%d/%Y %H:%M:%S',
-                    level = logging.INFO)
+import time
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+now_time = time.strftime("%Y-%m-%d-%H-%M", time.localtime())
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(levelname)s %(filename)s line: %(lineno)s - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    filename=BASE_DIR + '/../' + now_time + '.log')
+
 logger = logging.getLogger(__name__)
 
 
