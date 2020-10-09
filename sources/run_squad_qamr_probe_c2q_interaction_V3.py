@@ -220,7 +220,11 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
     #         span_indices_sentence[i * max_seq_length + j, 1] = j
 
     features = []
+    print("===len(examples)", len(examples))
+    logger.info("===len(examples):%d" % len(examples))
     for (example_index, example) in enumerate(examples):
+        # print("==convert_examples_to_features.example_index:", example_index)
+        logger.info("==convert_examples_to_features.example_index:%d" % example_index)
         query_tokens = tokenizer.tokenize(example.question_text)
 
         if len(query_tokens) > max_query_length - 2:
@@ -1078,7 +1082,10 @@ def main():
 
     # Load a trained model that you have fine-tuned
     model_state_dict = torch.load(output_model_file)
-    model.module.load_state_dict(model_state_dict)
+    if hasattr(model, 'module'):
+        model.module.load_state_dict(model_state_dict)
+    else:
+        model.load_state_dict(model_state_dict)
     # model.load_state_dict(model_state_dict)
     model.to(device)
     # args.n_best_size = 1
