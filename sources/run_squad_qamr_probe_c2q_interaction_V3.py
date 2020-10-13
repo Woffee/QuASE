@@ -263,15 +263,26 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
             "DocSpan", ["start", "length"])
         doc_spans = []
         start_offset = 0
+        # print("===doc_stride:",doc_stride)
+        # print("===len(all_doc_tokens):", len(all_doc_tokens), all_doc_tokens)
+
         while start_offset < len(all_doc_tokens):
             length = len(all_doc_tokens) - start_offset
+
+            ### *************************
+            ### Here is the difference between SQUAD and our data. Our data's length are too large.
+            ### THen, the length of doc_spans will also be huge.
             if length > max_tokens_for_doc:
                 length = max_tokens_for_doc
+
+
+            # print("===start_offset,length", start_offset,length)
             doc_spans.append(_DocSpan(start=start_offset, length=length))
             if start_offset + length == len(all_doc_tokens):
                 break
             start_offset += min(length, doc_stride)
 
+        # print("===start_offset:", start_offset)
         for (doc_span_index, doc_span) in enumerate(doc_spans):
             token_to_orig_map = {}
             token_is_max_context = {}
@@ -452,11 +463,16 @@ def _check_is_max_context(doc_spans, cur_span_index, position):
     # and 0 right context.
     best_score = None
     best_span_index = None
+    # print("==len(doc_spans):", len(doc_spans))
+    # print("==cur_span_index:", cur_span_index)
+    # print("==position:", position)
     for (span_index, doc_span) in enumerate(doc_spans):
         end = doc_span.start + doc_span.length - 1
         if position < doc_span.start:
+            # print("position, doc_span.start: ", position, doc_span.start)
             continue
         if position > end:
+            # print("position, end: ", position, end)
             continue
         num_left_context = position - doc_span.start
         num_right_context = end - position
@@ -623,6 +639,8 @@ def write_predictions(all_examples, all_features, all_results, n_best_size,
 
     with open(output_prediction_file, "w") as writer:
         writer.write(json.dumps(all_predictions, indent=4) + "\n")
+
+    logger.info("Writing predictions to: %s done" % (output_prediction_file))
 
     with open(output_nbest_file, "w") as writer:
         writer.write(json.dumps(all_nbest_json, indent=4) + "\n")
@@ -837,7 +855,8 @@ def main():
                              "Positive power of 2: static loss scaling value.\n")
 
     args = parser.parse_args()
-
+    if torch.cuda.is_available():
+        logger.info("=== cuda is_available ")
     if args.local_rank == -1 or args.no_cuda:
         device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
         n_gpu = torch.cuda.device_count()
