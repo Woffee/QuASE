@@ -358,7 +358,11 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
                 logger.info("example_index: %s" % (example_index))
                 logger.info("doc_span_index: %s" % (doc_span_index))
                 logger.info("question tokens: %s" % " ".join(question_tokens))
-                logger.info("sentence tokens: %s" % " ".join(sentence_tokens))
+                if len(sentence_tokens) > 50:
+                    logger.info("sentence tokens[:50]: %s" % " ".join(sentence_tokens[:50]))
+                else:
+                    logger.info("sentence tokens: %s" % " ".join(sentence_tokens))
+
                 logger.info("token_to_orig_map: %s" % " ".join([
                     "%d:%d" % (x, y) for (x, y) in token_to_orig_map.items()]))
                 logger.info("token_is_max_context: %s" % " ".join([
@@ -370,8 +374,12 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
                     "input_mask_question: %s" % " ".join([str(x) for x in input_mask_question]))
                 logger.info(
                     "input_mask_sentence: %s" % " ".join([str(x) for x in input_mask_sentence]))
+
                 logger.info("example question: %s" % example.question_text)
-                logger.info("example sentence: %s" % " ".join(example.doc_tokens))
+                if len(example.doc_tokens) > 50:
+                    logger.info("example sentence[:50]: %s" % " ".join(example.doc_tokens[:50]))
+                else:
+                    logger.info("example sentence: %s" % " ".join(example.doc_tokens))
                 if is_training:
                     logger.info("example answer: %s" % example.orig_answer_text)
                     logger.info("example start position: %d" % example.start_position)
