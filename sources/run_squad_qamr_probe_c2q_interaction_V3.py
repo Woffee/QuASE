@@ -353,9 +353,9 @@ def convert_examples_to_features(examples, tokenizer, max_seq_length,
                 # span_results[start_position * max_seq_length + end_position] = 1
 
             if example_index < 20:
-                logger.info("*** Example ***")
+                logger.info("=== Example ===" )
                 logger.info("unique_id: %s" % (unique_id))
-                logger.info("example_index: %s" % (example_index))
+                logger.info("example_index: %d" % (example_index))
                 logger.info("doc_span_index: %s" % (doc_span_index))
                 logger.info("question tokens: %s" % " ".join(question_tokens))
                 if len(sentence_tokens) > 50:
